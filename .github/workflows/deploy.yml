@@ -38,6 +38,8 @@ jobs:
           --cpu 1 \
           --memory 1.5 \
           --os-type Linux \
+          --vnet "vmdb-prod-vnet" \
+          --subnet "subred-docker-flota" \
           --registry-login-server regflotacombustible.azurecr.io \
           --registry-username "${{ secrets.AZURE_REGISTRY_USERNAME }}" \
           --registry-password "${{ secrets.AZURE_REGISTRY_PASSWORD }}" \
