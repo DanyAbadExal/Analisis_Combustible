@@ -32,14 +32,15 @@ jobs:
     - name: Deploy to Azure Container Instances
       uses: azure/aci-deploy@v1
       with:
-        resource-group: 'prod-nuevo'       # Reemplaza por tu Grupo de Recursos en Azure
+        resource-group: 'prod-nuevo'       # Reemplaza por tu Grupo de Recursos real
         image: regflotacombustible.azurecr.io/streamlit-app:latest
         registry-login-server: regflotacombustible.azurecr.io
         registry-username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
         registry-password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        name: 'contenedor-flota-v6'              # El nombre de tu instancia de contenedor actual
-        location: 'East US'                    # La ubicación de tu recurso (ej: eastus, southcentralus)
+        name: 'contenedor-flota-v6'      # Reemplaza por tu nombre de contenedor real
+        location: 'East US'                    # Reemplaza por tu ubicación real
         ports: 8501
+        ip-address: Private                           # <--- ESTO INDICA QUE ES RED PRIVADA Y QUITA LA OBLIGACIÓN DEL DNS
         secure-environment-variables: |
           DB_USER_INDICADORES="srios"
           DB_PASS_INDICADORES="Sebastian2026"
