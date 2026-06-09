@@ -35,6 +35,8 @@ jobs:
           --resource-group "prod-nuevo" \
           --name "contenedor-flota-v6" \
           --image regflotacombustible.azurecr.io/streamlit-app:latest \
+          --cpu 1 \
+          --memory 1.5 \
           --os-type Linux \
           --registry-login-server regflotacombustible.azurecr.io \
           --registry-username "${{ secrets.AZURE_REGISTRY_USERNAME }}" \
