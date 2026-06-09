@@ -29,20 +29,10 @@ jobs:
         docker build -t regflotacombustible.azurecr.io/streamlit-app:latest .
         docker push regflotacombustible.azurecr.io/streamlit-app:latest
 
-    - name: Deploy to Azure Container Instances
-      uses: azure/aci-deploy@v1
-      with:
-        resource-group: 'prod-nuevo'       # Reemplaza por tu Grupo de Recursos real
-        image: regflotacombustible.azurecr.io/streamlit-app:latest
-        registry-login-server: regflotacombustible.azurecr.io
-        registry-username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-        registry-password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        name: 'contenedor-flota-v6'      # Reemplaza por tu nombre de contenedor real
-        location: 'East US'                    # Reemplaza por tu ubicación real
-        ports: 8501
-        ip-address: Private                           # <--- ESTO INDICA QUE ES RED PRIVADA Y QUITA LA OBLIGACIÓN DEL DNS
-        secure-environment-variables: |
-          DB_USER_INDICADORES="srios"
-          DB_PASS_INDICADORES="Sebastian2026"
-          DB_USER_QAS="calidadsa"
-          DB_PASS_QAS="Exalmar$2026"
+    - name: Update Azure Container Instance
+      run: |
+        az container update \
+          --resource-group "prod-nuevo" \
+          --name "contenedor-flota-v6" \
+          --image regflotacombustible.azurecr.io/streamlit-app:latest \
+          --set containers[0].environmentVariables=[{"name":"DB_USER_INDICADORES","secureValue":"srios"},{"name":"DB_PASS_INDICADORES","secureValue":"Sebastian2026"},{"name":"DB_USER_QAS","secureValue":"calidadsa"},{"name":"DB_PASS_QAS","secureValue":"Exalmar\$2026"}]
