@@ -35,4 +35,7 @@ jobs:
           --resource-group "prod-nuevo" \
           --name "contenedor-flota-v6" \
           --image regflotacombustible.azurecr.io/streamlit-app:latest \
+          --registry-login-server regflotacombustible.azurecr.io \
+          --registry-username "${{ secrets.AZURE_REGISTRY_USERNAME }}" \
+          --registry-password "${{ secrets.AZURE_REGISTRY_PASSWORD }}" \
           --secure-environment-variables DB_USER_INDICADORES="srios" DB_PASS_INDICADORES="Sebastian2026" DB_USER_QAS="calidadsa" DB_PASS_QAS="Exalmar\$2026"
