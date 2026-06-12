@@ -31,7 +31,7 @@ st.set_page_config(
     page_icon="🐟"
 )
 
-# ─── Paleta Corporativa Exalmar (UI y Módulo 2) ────────────────────
+# ─── Paleta Exalmar (UI y Módulo 2) ────────────────────
 C_BG_DARK      = '#0a1628'
 C_PANEL_DARK   = '#0f1e38'
 C_PANEL_MID    = '#162440'
@@ -46,7 +46,7 @@ C_BLUE_DEEP    = '#004692'
 C_WARN_ORANGE  = '#f59e0b'
 C_DANGER_RED   = '#ef4444'
 
-# ─── Paleta Pastel (Solo para Gráficos Seaborn Módulo 1) ───────────
+# ─── Paleta Pastel ───────────
 P_TEAL         = '#a2e1db'
 P_GREEN        = '#baffc9'
 P_BLUE         = '#bae1ff'
@@ -143,6 +143,7 @@ def render_header(titulo: str, subtitulo: str = "") -> None:
 # ===================================================================
 # 1. FUNCIONES COMPARTIDAS DE UTILIDAD
 # ===================================================================
+
 @st.cache_data
 def bootstrapping_media(datos, n_iteraciones=5000, intervalo_confianza=95):
     datos = datos.dropna().values
@@ -168,6 +169,7 @@ def Q3(x): return x.quantile(0.75)
 # ===================================================================
 # 2. CONEXIONES A BASES DE DATOS Y CARGA DE MODELOS
 # ===================================================================
+
 @st.cache_data(show_spinner="Extrayendo datos...", ttl=3600, max_entries=3)
 def load_data_metas():
     server   = os.getenv('DB_SERVER_INDICADORES', '10.1.0.4')
@@ -191,6 +193,7 @@ def load_data_metas():
         LEFT JOIN [dbo].[Temporada] t ON tr.[idtemporada] = t.[idtemporada]
         WHERE p.[idTemporadaRegion] >= 57
     )
+
     SELECT * FROM FaenasBase
     WHERE GalonesConsumo > 0 AND DuracionFaenaHoras > 0 AND DuracionFaenaHoras <= 120;
     """
@@ -223,7 +226,7 @@ def load_data_telemetria():
     conn_str = (f"DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={server};DATABASE=BD_TEL_FLOTA_PRD;UID={username};PWD={password};Encrypt=yes;TrustServerCertificate=no;")
     queries = {
         "df_mp_m":   "SELECT codigo AS id, ep, fecha_Registro AS fecha, TRY_CAST(latitud AS float) AS Latitud, TRY_CAST(longitud AS float) AS Longitud, TRY_CAST(velocidad AS float) / 10.0 AS Velocidad, rumbo AS Rumbo, TRY_CAST(gal_h AS float) / 10.0 AS gal_h, TRY_CAST(rpm AS float) AS rpm FROM dbo.VW_MP_M_ORDENADO WHERE rpm <> '0' AND gal_h <> '0';",
-        "df_mp_e":   "SELECT [codigo] AS id, [ep], [fecha_registro] AS fecha, TRY_CAST([latitud] AS float) AS Latitud, TRY_CAST([longitud] AS float) AS Longitud, TRY_CAST([velocidad] AS float) AS Velocidad, [rumbo] AS Rumbo, TRY_CAST([consumo_gal_h] AS float) / 3.785 AS gal_h, TRY_CAST([rpm] AS float) AS rpm FROM [dbo].[VW_MP_E_ORDENADO] WHERE [rpm] <> '0' AND [consumo_gal_h] <> '0';",
+        "df_mp_e":   "SELECT [codigo] AS id, [ep], [fecha_registro] AS fecha, TRY_CAST([latitud] AS float) AS Latitud, TRY_CAST([longitud] AS float) AS Longitud, TRY_CAST([velocidad] AS float) AS Velocidad, [rumbo] AS Rumbo, TRY_CAST([consumo_gal_h] AS float) AS gal_h, TRY_CAST([rpm] AS float) AS rpm FROM [dbo].[VW_MP_E_ORDENADO] WHERE [rpm] <> '0' AND [consumo_gal_h] <> '0';",
         "df_mp_e_h": "SET NOCOUNT ON; SELECT m.id, e.Embarcacion AS ep, m.fecha, TRY_CAST(m.Latitude AS float) AS Latitud, TRY_CAST(m.Longitude AS float) AS Longitud, TRY_CAST(m.Speed AS float) / 10.0 AS Velocidad, m.header AS Rumbo, TRY_CAST(m.parameter12 AS float) / 3.785 AS gal_h, TRY_CAST(m.parameter02 AS float) AS rpm FROM [dbo].[MP_E_H] m INNER JOIN dbo.Embarcacion e ON m.IdEmbarcacion = e.IdEmbarcacion WHERE m.parameter02 <> '0' AND m.parameter12 <> '0';",
         "df_mp_m_h": "SET NOCOUNT ON; SELECT m.id, e.Embarcacion AS ep, m.fecha, TRY_CAST(m.Latitude AS float) AS Latitud, TRY_CAST(m.Longitude AS float) AS Longitud, TRY_CAST(m.Speed AS float) / 10.0 AS Velocidad, m.heading AS Rumbo, TRY_CAST(m.GAL_H AS float) / 10.0 AS gal_h, TRY_CAST(m.RPM AS float) AS rpm FROM [dbo].[MP_M_H] m INNER JOIN dbo.Embarcacion e ON m.IdEmbarcacion = e.IdEmbarcacion WHERE m.RPM <> '0' AND m.GAL_H <> '0';"
     }
