@@ -195,7 +195,8 @@ def load_data_metas():
     )
 
     SELECT * FROM FaenasBase
-    WHERE GalonesConsumo > 0 AND DuracionFaenaHoras > 0 AND DuracionFaenaHoras <= 120;
+    WHERE GalonesConsumo > 0 AND DuracionFaenaHoras > 0 AND DuracionFaenaHoras <= 120
+    AND  Embarcacion NOT IN ('ZHENNA 3', 'PONTEVEDRA', 'MARIA MERCEDES 5668', 'CORINTIA');
     """
     try:
         with pyodbc.connect(conn_str) as conn:
